@@ -5,6 +5,7 @@ Http        = require 'http'
 Https       = require 'https'
 Crypto      = require 'crypto'
 QueryString = require 'querystring'
+MimeTypes   = require 'mime-types'
 
 port            = parseInt process.env.PORT        || 8081, 10
 version         = require(Path.resolve(__dirname, "package.json")).version
@@ -158,9 +159,12 @@ process_url = (url, transferredHeaders, resp, remaining_redirects) ->
             contentType = newHeaders['content-type']
 
             unless contentType?
-              srcResp.destroy()
-              four_oh_four(resp, "No content-type returned", url)
-              return
+              lookup = MimeTypes.lookup url.pathname
+              if lookup is no
+                srcResp.destroy()
+                four_oh_four(resp, "No content-type returned", url)
+                return
+              newHeaders['content-type'] = contentType = lookup
 
             contentTypePrefix = contentType.split(";")[0].toLowerCase()
 
