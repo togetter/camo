@@ -13,8 +13,10 @@ shared_key      = process.env.CAMO_KEY             || '0x24FEEDFACEDEADBEEFCAFE'
 max_redirects   = process.env.CAMO_MAX_REDIRECTS   || 4
 camo_hostname   = process.env.CAMO_HOSTNAME        || "unknown"
 socket_timeout  = process.env.CAMO_SOCKET_TIMEOUT  || 10
-logging_enabled = process.env.CAMO_LOGGING_ENABLED || "disabled"
-keep_alive = process.env.CAMO_KEEP_ALIVE || "false"
+logging_enabled = process.env.CAMO_LOGGING_ENABLED || 'disabled'
+keep_alive      = process.env.CAMO_KEEP_ALIVE || "false"
+accept          = process.env.CAMO_ACCEPT || undefined
+accept_encoding = process.env.CAMO_ACCEPT_ENCODING || undefined
 
 content_length_limit = parseInt(process.env.CAMO_LENGTH_LIMIT || 5242880, 10)
 
@@ -222,8 +224,8 @@ server = Http.createServer (req, resp) ->
     transferredHeaders =
       'Via'                     : user_agent
       'User-Agent'              : user_agent
-      'Accept'                  : req.headers.accept ? 'image/*'
-      'Accept-Encoding'         : req.headers['accept-encoding'] ? ''
+      'Accept'                  : accept || req.headers.accept ? 'image/*'
+      'Accept-Encoding'         : accept_encoding || req.headers['accept-encoding'] ? ''
       "X-Frame-Options"         : default_security_headers["X-Frame-Options"]
       "X-XSS-Protection"        : default_security_headers["X-XSS-Protection"]
       "X-Content-Type-Options"  : default_security_headers["X-Content-Type-Options"]
